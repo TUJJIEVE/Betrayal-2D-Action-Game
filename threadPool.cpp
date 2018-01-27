@@ -52,6 +52,7 @@ int threadPool::addJob(std::function<int(int)> newJob) {  // If mulitple threads
 //template<typename T1, typename T2>
 void threadPool::destroy() {
 	isStop = 1;
+	c.notify_all();
 	for (int i = 0; i < 10; i++) {
 		if (myThreads[i].joinable()) myThreads[i].join();
 	}
