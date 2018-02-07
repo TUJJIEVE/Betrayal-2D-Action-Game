@@ -2,11 +2,12 @@
 #include <thread>
 #include <SFML\Graphics.hpp>
 
-Image_player::Image_player(std::string a, int n,int ti)	//ti is time for sleep if ti is negative it will take random time
+Image_player::Image_player(std::string a, std::string t, int n)	//filenames , sleeptime sepetrated with '@'
 {
-	sleep_time = ti;
+
 	num_strings = n;
 	str = new std::string[n];
+	sleep_time = new int[n];
 	for (int i = 0,j=0; i < n; i++) {
 		std::string temp = "";
 		for (; ; j++)
@@ -17,22 +18,29 @@ Image_player::Image_player(std::string a, int n,int ti)	//ti is time for sleep i
 		j = j + 1;
 		*(str + i) = temp;
 	}
+	for (int i = 0, j = 0; i < n; i++) {
+		int temp = 0;
+		for (;; j++) {
+			if (t[j] == '@')break;
+			temp = temp * 10 + t[j] - '0';
+		}
+		j = j + 1;
+		*(sleep_time + i) = temp;
+	}
 }
 
 int Image_player::image_display_function(sf::RenderWindow * window) {
-	//std::string imag[2] = { "1.jpg","2.png" };
 	sf::Vector2f targetSize(window->getSize().x, window->getSize().y);
 	for (int  i = 0; i < num_strings ; i++)
 	{
 		sf::Texture texture;
 		if (!texture.loadFromFile(*(str + i)))return 1;
-		
 		sf::Sprite img_f;
 		img_f.setTexture(texture);
 		img_f.setScale(targetSize.x / img_f.getLocalBounds().width,targetSize.y / img_f.getLocalBounds().height);
 		window->draw(img_f);
 		window->display();
-		std::this_thread::sleep_for(std::chrono::seconds(sleep_time));
+		std::this_thread::sleep_for(std::chrono::seconds(*(sleep_time+i)));
 	}
 	return 0;
 }
@@ -40,4 +48,5 @@ int Image_player::image_display_function(sf::RenderWindow * window) {
 Image_player::~Image_player()
 {
 	delete[]str;
+	delete[]sleep_time;
 }
