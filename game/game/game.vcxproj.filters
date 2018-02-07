@@ -30,6 +30,9 @@
     <ClCompile Include="Hero.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="IntroDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="threadPool.h">
@@ -44,16 +47,21 @@
     <ClInclude Include="Hero.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="IntroDisplay.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="openingimage2.png">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="A:\openingimage1.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="A:\openingimage11366x768.png">
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="music_f\tittlemusic-2.ogg">
       <Filter>Resource Files</Filter>
-    </Image>
+    </None>
+    <None Include="music_f\tittlemusic.ogg">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

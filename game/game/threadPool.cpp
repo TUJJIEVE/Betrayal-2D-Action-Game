@@ -20,25 +20,25 @@ int threadPool::loopingFunction() {
 	std::unique_lock<std::mutex> lock(m1);
 	
 	while (true) {
-		totalThreads += 1;
+		//totalThreads += 1;
 		while (jobQueue.size() == 0 && !isStop) {
 			c.wait(lock);// , [this]() {return !jobQueue.size() == 0; });
 		
 		}
 		if (isStop) return 0;
 		
-		std::function<int(int)> job = jobQueue.front();
+		std::function<int()> job = jobQueue.front();
 		jobQueue.pop();
 		isWorkToDo -= 1;
 		if (isWorkToDo == 0) isJobQueueEmpty = 1;
-		job(10);
+		job();
 		//std::this_thread::sleep_for(std::chrono::seconds(4));
 	}
 }
 //template<typename T1, typename T2>
 
 //template<typename T1,typename T2>
-int threadPool::addJob(std::function<int(int)> newJob) {  // If mulitple threads will be acessing then see that it is locked
+int threadPool::addJob(std::function<int()> newJob) {  // If mulitple threads will be acessing then see that it is locked
 	
 	std::unique_lock<std::mutex> lock(m1);
 	jobQueue.push(newJob);

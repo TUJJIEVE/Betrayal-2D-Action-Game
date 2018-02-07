@@ -1,45 +1,90 @@
 #include <iostream>
 #include <thread>
-#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <string>
-#include <mutex>
 #include "threadPool.h"
 #include <functional>
 #include <SFML/Graphics.hpp>
-
+#include <SFML\Audio.hpp>
+#include "game.h"
+#include "Player.h"
 
 
 int main() {
-	sf::RenderWindow gameWindow(sf::VideoMode(1366, 768), "OPEN-WINDOW", sf::Style::Fullscreen);
+	sf::RenderWindow *gameWindow=new sf::RenderWindow(sf::VideoMode(1366, 768), "BETRAYAL=>GAME", sf::Style::Fullscreen);
+	Game * game = new Game(10, gameWindow);
+	game->displayTitlescreen();
+	while (game->running())
+	{
+		game->handleEvents();
+		game->update();
+		game->render();
+	}
+		
+		return 0;
+}
+
+/*#include <SFML/Graphics.hpp>
+#include <SFML\Audio.hpp>
+#include <iostream>
+#include "IntroDisplay.h"
+#include <thread>
+int main()
+{
+	sf::RenderWindow window(sf::VideoMode(1366, 768), "OPEN-WINDOW", sf::Style::Fullscreen);
 	sf::Texture tex;
-	sf::Sprite sp;
+	sf::Sprite cartoon;
 	tex.setSmooth(true);
-	if (!tex.loadFromFile("openingimage2.png")) {
-		std::cout << "Failure";
-		int n;
-		std::cin >> n;
+
+	if (!tex.loadFromFile("images_f/openingimage1.png")) {
 		return EXIT_FAILURE;
 	}
-	sp.setTexture(tex);
+
+	cartoon.setTexture(tex);
+	std::string a = "images_f/1story.png@images_f/2story.png@images_f/3story.png@images_f/4story.png@";
+	Image_player img_list(a, "6@7@8@3@", 4);
 	sf::Event event;
-	while (gameWindow.isOpen())
+	sf::Music music;
+
+	if (!music.openFromFile("music_f\\tittlemusic.ogg")) {
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		return -1;//error
+	}
+	music.play();
+	while (window.isOpen())
 	{
-		while (gameWindow.pollEvent(event)) {
-			if (event.type == sf::Event::Closed) {
-				gameWindow.close();
-			}
-			if (event.type == sf::Event::KeyPressed) {
-				if (event.key.code== sf::Keyboard::Escape) {
-					gameWindow.close();
+		while (window.pollEvent(event))
+		{
+			switch (event.type)
+			{
+			case sf::Event::Closed:
+				window.close();
+				break;
+			case sf::Event::KeyPressed:
+				if (event.key.code == sf::Keyboard::Escape) {
+					std::cout << "the escape key was pressed" << std::endl;
+					window.close();
 				}
+				else {
+					// starts other thread for music and then other for image display
+					std::cout << "some other key is pressed" << std::endl;
+					img_list.image_display_function(&window);
+					std::this_thread::sleep_for(std::chrono::seconds(10));
+					//start vedio
+				}
+				break;
+
+				// we don't process other types of events
+			default:
+				break;
 			}
+
 		}
-		gameWindow.draw(sp);
-		gameWindow.display();
+		window.clear();
+		window.draw(cartoon);
+		window.display();
 
 	}
 	return 0;
-}
-
+}*/

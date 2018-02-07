@@ -14,8 +14,8 @@ class threadPool {
 			std::cout << "Destroyed" << std::endl;
 		}
 		//std::thread getWorkerThread();
-		int addJob(std::function<int(int)>);
-		void dispatch();
+		int addJob(std::function<int()>);
+	//	void dispatch();
 		void destroy();
 	private:
 		int isJobQueueEmpty;
@@ -26,7 +26,7 @@ class threadPool {
 		int loopingFunction();
 		std::vector<std::thread> myThreads;
 		std::condition_variable c;
-		std::queue<std::function<int(int)>> jobQueue;
+		std::queue<std::function<int()>> jobQueue;
 		int flag;
 		int isWorkToDo;
 
