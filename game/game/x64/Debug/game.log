@@ -1,2 +1,5 @@
 ﻿  main.cpp
+  game.cpp
+  Generating Code...
+c:\users\ujjieve\source\repos\game\game\game.cpp(79): warning C4715: 'Game::loading': not all control paths return a value
   game.vcxproj -> C:\Users\ujjieve\source\repos\game\x64\Debug\game.exe
