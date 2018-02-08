@@ -2,6 +2,7 @@
 #include <SFML\Graphics.hpp>
 #include "threadPool.h"
 #include "Player.h"
+#include "menu.h"
 #include <SFML\Audio.hpp>
 /* First create the players using players class then create the game pass the player pointers to the game
    
@@ -10,10 +11,7 @@ class Game {
 	public:
 		Game(int numWorkerThreads,sf::RenderWindow *);
 
-		inline ~Game() {
-			this->gameWindow->clear(sf::Color::Black);
-			this->gameWindow->display();
-		}
+		~Game();
 		void init();
 		void handleEvents();
 		void update();
@@ -32,7 +30,8 @@ class Game {
 			gameWindow->close();
 		
 		}
-
+		Menu * mainMenu;
+		sf::RenderWindow * gameWindow;
 private :
 	enum Sprites
 	{
@@ -50,15 +49,18 @@ private :
 		Lastsound
 
 	};
-		sf::RenderWindow * gameWindow;
-		threadPool * workerPool;
-		Player *hero1, *hero2;
-		int isopen;
-		sf::Event event;
-		std::vector<Player> players;
-		int displayStory();
-		int loading();
-		std::vector<sf::Sprite> spriteSheet;
-		std::vector<sf::Sound> sounds;
+	sf::Music *mainMenuSong;
+	sf::Music *storySong;
+	sf::Music *openingSong;
+	threadPool * workerPool;
+	Player *hero1, *hero2;
+	int isopen;
+	sf::Event event;
+	std::vector<Player> players;
+	int displayStory();
+	int loading();
+	std::vector<sf::Sprite> spriteSheet;
+	std::vector<sf::Sound> sounds;
+	//	Menu * mainMenu;   // Pointer to the Menu object
 
 };
