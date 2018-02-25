@@ -1,31 +1,14 @@
 #include <SFML/Graphics.hpp>
-#include <SFML\Audio.hpp>
+#include "player_1.h"
 #include <iostream>
-#include "Image_player.h"
-#include <thread>
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1366, 768), "OPEN-WINDOW",sf::Style::Fullscreen);
-	sf::Texture tex;
-	sf::Sprite cartoon;
-	tex.setSmooth(true);
-
-	if (!tex.loadFromFile("images_f/openingimage1.png")) {
-		return EXIT_FAILURE;
-	}
-	
-	cartoon.setTexture(tex);
-	std::string a = "images_f/1story.png@images_f/2story.png@images_f/3story.png@images_f/4story.png@";
-	Image_player img_list(a,"6@7@8@3@",4);
-	sf::Event event;
-	sf::Music music;
-	if (!music.openFromFile("music_f\\tittlemusic.ogg")) {
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		return -1;//error
-	}
-	music.play();
+	sf::RenderWindow window(sf::VideoMode(1200, 600), "Game_v_2");	//opens window
+	player_1 srikanth("images_f/sfr.png@images_f/sfl.png@images_f/sbr.png@images_f/sbl.png@images_f/srr.png@images_f/srl.png@images_f/srm.png@images_f/slr.png@images_f/sll.png@images_f/slm.png@");
 	while (window.isOpen())
 	{
+		sf::Event event;
+		
 		while (window.pollEvent(event))
 		{
 			switch (event.type)
@@ -38,25 +21,33 @@ int main()
 					std::cout << "the escape key was pressed" << std::endl;
 					window.close();
 				}
-				else {
-					// starts other thread for music and then other for image display
-					std::cout << "some other key is pressed" << std::endl;
-					img_list.image_display_function(&window);
-					std::this_thread::sleep_for(std::chrono::seconds(10));
-					//start vedio
+				else if (event.key.code == sf::Keyboard::Return) {
+					if (srikanth.intialseimage(sf::Vector2f(150,150)))std::cout << "file not opened!!\n";
+				}
+				else if (event.key.code == sf::Keyboard::Up) {
+					srikanth.move_player('u', 2.0f);
+					std::cout << "up key is pressed\n";
+				}
+				else if (event.key.code == sf::Keyboard::Down) {
+					srikanth.move_player('d', 2.0f);
+					std::cout << "down key is pressed\n";
+				}
+				else if (event.key.code == sf::Keyboard::Right) {
+					srikanth.move_player('r', 2.0f);
+					std::cout << "right key is pressed\n";
+				}
+				else if (event.key.code == sf::Keyboard::Left) {
+					srikanth.move_player('l', 2.0f);
+					std::cout << "left key is pressed\n";
 				}
 				break;
-
-				// we don't process other types of events
-			default:
-				break;
 			}
-	
 		}
-		window.clear();
-		window.draw(cartoon);
-		window.display();
 		
+		window.clear();
+		srikanth.drawplayer(&window);
+		window.display();
 	}
+
 	return 0;
 }
