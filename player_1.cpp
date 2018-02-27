@@ -40,7 +40,22 @@ player_1::player_1(std::string a )
 int player_1::intialseimage(sf::Vector2f ip) {
 	state.setTexture(fr_);
 	state.setPosition(ip);
+	state.setTextureRect(sf::IntRect(0,0,100,100));
 	return 0;
+}
+void player_1::shift_player(char direction, float speed) {
+	if (direction == 'u') {
+		state.move(0.0f, -speed);
+	}
+	else if (direction == 'd') {
+		state.move(0.0f, +speed);
+	}
+	else if (direction == 'r') {
+		state.move(speed, 0.0f);
+	}
+	else if (direction == 'l') {
+		state.move(-speed, 0.0f);
+	}
 }
 void player_1::move_player(char direction, float speed) {
 	if (direction == 'u') {
@@ -85,6 +100,7 @@ void player_1::move_player(char direction, float speed) {
 	currentpositions = state.getPosition();
 }
 void player_1::drawplayer(sf::RenderWindow * window_) {
+	state.setTextureRect(sf::IntRect(0, 0, 100, 100));
 	window_->draw(state);
 }
 player_1::~player_1()
