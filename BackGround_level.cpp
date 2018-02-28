@@ -2,11 +2,13 @@
 
 
 
-BackGround_level::BackGround_level(std::string a , float t1, float t2)
+BackGround_level::BackGround_level(std::string a , float t1, float t2,int l)
 {
-	img_file = a;
+	img_file = a + ".png";
+	collision_layer_file = a + ".txt";
 	img_brd = t2;
 	img_len = t1;
+	lines = l;
 }
 void BackGround_level::init_(float a, float b, float c, float d) {
 	x_ = a;
@@ -16,9 +18,125 @@ void BackGround_level::init_(float a, float b, float c, float d) {
 	if (!tex.loadFromFile(img_file))printf("unable to form texturte in background_level object");
 	bg.setTexture(tex);
 	bg.setTextureRect(sf::IntRect(a, b, c, d));
-	if (!test_tex.loadFromFile("images_f/test.png"))printf("unable to form texturte in background_level object");
-	test_sprite.setTexture(test_tex);
+	
 	printf("it came to level background\n");
+}
+void BackGround_level::used_in_boundarycollision(sf::Vector2f point, int start,int *result) {
+	std::fstream file(collision_layer_file);
+	file.seekg(std::ios::beg);
+	for (int i = 0; i < start - 1; ++i) {
+		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+	std::string temp;
+	float x=0, y=0, l=0, b=0;
+	*result = 0;
+	for (int i = 0,j=0; i < 1000 && file.eof(); i++) {
+		file >> temp;
+		while (temp[j++] != 'x');
+		while (temp[j++] != '"');
+		j++;
+		while (temp[j++] != '"')x = x * 10 + (float)(temp[j] - '0');
+		j++;
+		while (temp[j++] != '"');
+		j++;
+		while (temp[j++] != '"')y = y * 10 + (float)(temp[j] - '0');
+		j++;
+		while (temp[j++] != '"');
+		j++;
+		while (temp[j++] != '"')l = l * 10 + (float)(temp[j] - '0');
+		j++;
+		while (temp[j++] != '"');
+		j++;
+		while (temp[j++] != '"')b = b * 10 + (float)(temp[j] - '0');
+		if (point_lie_in_rectangle(point, x, y, l, b) == 1) {
+			*result = 1;
+			break;
+		}
+	}
+}
+int BackGround_level::check_collision_with_boundary(char direction, float speed, sf::Vector2f point) {	//checks parralaraly
+	printf("entered to check_collision_with_boundary!!\n");
+	int n = lines / 1000 , flag = 0;
+	if (n % 1000 != 0)n++;
+	if (direction == 'u') point.y -= speed;
+	else if (direction == 'd') point.y += speed;
+	else if (direction == 'r')point.x += speed;
+	else if (direction == 'l')point.x -= speed;
+
+	point.y += y_;
+	point.x += x_;
+
+	std::fstream file(collision_layer_file);
+	if (!file)printf("shit happenes!!\n");
+	std::string temp;
+	float x=0.0, y=0.0, l=0.0, b=0.0;
+	std::cout << "no of lines " << lines << std::endl;
+	for (int i = 0,j=0;i<lines; i++)
+	{
+		x = 0.0;
+		y = 0.0;
+		l = 0.0;
+		b = 0.0;
+		file >> temp;
+		file >> temp;
+		file >> temp;
+		std::cout << temp << std::endl;
+		j = 0;
+		while (temp[j++] != '"');
+		while(temp[j]!='"')x = x *10 + (int)(temp[j++] - '0');
+		j = 0;
+		file >> temp;
+		std::cout << temp << std::endl;
+		while (temp[j++] != '"');
+		while (temp[j] != '"')y = y * 10 + (int)(temp[j++] - '0');
+		j = 0;
+		file >> temp;
+		std::cout << temp << std::endl;
+		while (temp[j++] != '"');
+		while (temp[j] != '"')l = l * 10 + (int)(temp[j++] - '0');
+		j = 0;
+		file >> temp;
+		std::cout << temp << std::endl;
+		while (temp[j++] != '"');
+		while (temp[j] != '"')b = b * 10 + (int)(temp[j++] - '0');
+		if (x > point.x && y > point.y)return 0;	//helps in cheking only some pats of file as file is sorted
+		if (point_lie_in_rectangle(point, x, y, l, b) == 1) {
+			flag = 1;
+			return flag;
+		}
+		file >> temp;
+		file >> temp;
+		file >> temp;
+		file >> temp;
+		file >> temp;
+		file >> temp;
+	}
+	/*
+	std::thread *thread_ptr = new std::thread[n];
+	int * temp = new int[n];	
+	if (direction == 'u') point.y -= speed;
+	else if (direction == 'd') point.y += speed;
+	else if (direction == 'r')point.x += speed;
+	else if (direction == 'l')point.x -= speed;
+
+	for (int i = 0; i<n; i++) {
+		*(thread_ptr + i) = std::thread::thread(&used_in_boundarycollision, point, i * 1000, temp + i);
+	}
+
+	for (int i = 0; i<n; i++) {
+		(thread_ptr+i)->join();
+	}
+	for (int i = 0; i < n; i++)
+	{
+		if (*(temp + i) == 1) {
+			flag = 1;
+			break;
+		}
+	}
+	delete[] thread_ptr;
+	delete[] temp;*/
+	printf("exited from check collision with boundary!!\n");
+	return flag;
 }
 int BackGround_level::point_lie_in_rectangle(sf::Vector2f point ,float x , float y , float l , float b) {
 	printf("%f %f %f %f %f %f are need to be checked in rectange\n ",point.x,point.y,x,y,l,b);
@@ -52,6 +170,7 @@ int BackGround_level::move_background(char direction, float speed, sf::Vector2f 
 		f_point1.x += speed;
 		f_point2.x -= speed;
 	}
+	if (check_collision_with_boundary(direction, speed, point2) == 1)return flag;
 	if (point_lie_in_rectangle(f_point2, 0, 0, length, breadth) == 1 && point_lie_in_rectangle(point1, 0,0, length, breadth) == 1) {
 		flag = 2;	//need to change player position
 	}
