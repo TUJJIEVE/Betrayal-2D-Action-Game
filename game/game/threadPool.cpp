@@ -1,7 +1,5 @@
 #include "threadPool.h"
-#include <functional>
 
-#include<condition_variable>
 threadPool::threadPool(int n) {
 	isWorkToDo = 0;
 	isJobQueueEmpty = 1;
@@ -17,20 +15,25 @@ threadPool::threadPool(int n) {
 
 int threadPool::loopingFunction() {
 	//std::condition_variable c;
-	std::unique_lock<std::mutex> lock(m1);
-	
+	std::function<int()> job;
 	while (true) {
 		//totalThreads += 1;
-		while (jobQueue.size() == 0 && !isStop) {
-			c.wait(lock);// , [this]() {return !jobQueue.size() == 0; });
-		
+		{
+			std::unique_lock<std::mutex> lock(m1);
+
+			while (jobQueue.size() == 0 && !isStop) {
+				c.wait(lock);// , [this]() {return !jobQueue.size() == 0; });
+
+			}
+			if (isStop) return 0;
+
+			job = jobQueue.front();
+			jobQueue.pop();
+			isWorkToDo -= 1;
+			if (isWorkToDo == 0) {
+				isJobQueueEmpty = 1;
+			}
 		}
-		if (isStop) return 0;
-		
-		std::function<int()> job = jobQueue.front();
-		jobQueue.pop();
-		isWorkToDo -= 1;
-		if (isWorkToDo == 0) isJobQueueEmpty = 1;
 		job();
 		//std::this_thread::sleep_for(std::chrono::seconds(4));
 	}
@@ -38,14 +41,25 @@ int threadPool::loopingFunction() {
 //template<typename T1, typename T2>
 
 //template<typename T1,typename T2>
-int threadPool::addJob(std::function<int()> newJob) {  // If mulitple threads will be acessing then see that it is locked
-	
+int threadPool::addJob(int count,std::function<int()> newJob,...) {  // If mulitple threads will be acessing then see that it is locked
+	va_list jobs;
+	va_start(jobs, newJob);
 	std::unique_lock<std::mutex> lock(m1);
 	jobQueue.push(newJob);
 	isWorkToDo += 1;
 	isJobQueueEmpty = 0;
+	lock.unlock();
 	c.notify_one();
+	for (int i = 1; i < count; i++) {
+		lock.lock();
+		jobQueue.push(va_arg(jobs,std::function<int()>));
+		isWorkToDo += 1;
+		isJobQueueEmpty = 0;
+		lock.unlock();
+		c.notify_one();
 
+	}
+	va_end(jobs);
 	return 1;
 }
 //template<typename T1, typename T2>
