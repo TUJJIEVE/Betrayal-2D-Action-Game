@@ -7,7 +7,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(1200, 600), "Game_v_2");	//opens window
 	player_1 srikanth("images_f/sfr.png@images_f/sfl.png@images_f/sbr.png@images_f/sbl.png@images_f/srr.png@images_f/srl.png@images_f/srm.png@images_f/slr.png@images_f/sll.png@images_f/slm.png@");
 	player_1 ujjieve("images_f/ufr.png@images_f/ufl.png@images_f/ubr.png@images_f/ubl.png@images_f/urr.png@images_f/url.png@images_f/urm.png@images_f/ulr.png@images_f/ull.png@images_f/ulm.png@");
-	BackGround_level level1("images_f/room1.png",3840,3840);
+	BackGround_level level1("images_f/room1",3840,3840,7225);
 	
 	while (window.isOpen())
 	{
@@ -26,13 +26,14 @@ int main()
 					window.close();
 				}
 				else if (event.key.code == sf::Keyboard::Return) {
-					if (srikanth.intialseimage(sf::Vector2f(150, 150)))std::cout << "srikanth not opened!!\n";
-					if (ujjieve.intialseimage(sf::Vector2f(200, 200)))std::cout << "ujjieve not opened!!\n";
+					if (srikanth.intialseimage(sf::Vector2f(450, 450)))std::cout << "srikanth not opened!!\n";
+					if (ujjieve.intialseimage(sf::Vector2f(210,320)))std::cout << "ujjieve not opened!!\n";
 					level1.init_(0, 0, 1200, 600);
 					std::cout << "positions of srikanth : ( " << srikanth.state.getPosition().x << " , " << srikanth.state.getPosition().y << " ) Positions of ujjieve : ( " << ujjieve.state.getPosition().x << " , " << ujjieve.state.getPosition().y << " )\n";
 				}
 				else if (event.key.code == sf::Keyboard::Up) {
 					int code = level1.move_background('u', 2.0f, ujjieve.state.getPosition(), srikanth.state.getPosition());
+			
 					if (code == 2) {
 						srikanth.move_player('u', 2.0f);
 					}
