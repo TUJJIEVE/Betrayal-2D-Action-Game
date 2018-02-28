@@ -3,21 +3,26 @@
 #include "threadPool.h"
 #include "Player.h"
 #include "menu.h"
+#include "IntroDisplay.h"
+#include "Hero.h"
 #include <SFML\Audio.hpp>
+#include "Map.h"
 /* First create the players using players class then create the game pass the player pointers to the game
    
 */
 class Game {
 	public:
-		Game(int numWorkerThreads,sf::RenderWindow *);
+
+		Game(int numWorkerThreads,sf::RenderWindow *,int numLevels,std::string maps);
 
 		~Game();
 		void init();
 		void handleEvents();
 		void update();
 		void render();
-
+		 
 		int displayTitlescreen();
+
 		inline	sf::RenderWindow * getGameWindow() {
 			return this->gameWindow;   // Can be *this->gameWindow??
 		}
@@ -33,6 +38,7 @@ class Game {
 		Menu * mainMenu;
 		sf::RenderWindow * gameWindow;
 private :
+	
 	enum Sprites
 	{
 		mainScreen = 0,
@@ -49,18 +55,41 @@ private :
 		Lastsound
 
 	};
+	/*Atrributes for the game class */
+
+	sf::Event event;  
+	threadPool * workerPool;
+
+	std::vector<sf::Sprite> spriteSheet;
+	std::vector<sf::Sound> sounds;
+	std::vector<Maps> gameMaps;
+
+	std::string mapPaths;
+
+	Player *srikanth, *ujjieve;
+
 	sf::Music *mainMenuSong;
 	sf::Music *storySong;
 	sf::Music *openingSong;
-	threadPool * workerPool;
-	Player *hero1, *hero2;
+
+	int currentLevel, totalLevels;
 	int isopen;
-	sf::Event event;
-	std::vector<Player> players;
+	bool iskey;
+	bool isMenuActive; // if menu active or not
+	bool gameActive; // if game is active or not if yes then update and render methods are invoked else not invoked
+					 
+	/*Methods used by game class*/
+
+	// For displaying purposes
 	int displayStory();
-	int loading();
-	std::vector<sf::Sprite> spriteSheet;
-	std::vector<sf::Sound> sounds;
-	//	Menu * mainMenu;   // Pointer to the Menu object
+	// For updating purposes
+	int playersUpdate();
+	int mapUpdate();
+	// For rendering purposes
+	void playerRender();
+	void mapRender();
+	// For loading purposes
+	int loadMenu();
+	int loadMaps();
 
 };

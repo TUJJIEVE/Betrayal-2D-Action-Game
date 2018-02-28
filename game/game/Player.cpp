@@ -1,9 +1,10 @@
 #include "Player.h"
 
-Player::Player(std::string imgPath,int maxhp) {
+Player::Player(std::string imgPath, sf::Vector2f position, int health,std::string bullet) {
 	this->imgPath = imgPath;
-	this->maxhp = maxhp;
-	setTexture();
+	this->bulletPath = bullet;
+	this->maxhp = hp;
+	this->initialPos = position;
 }
 
 Player::~Player()
