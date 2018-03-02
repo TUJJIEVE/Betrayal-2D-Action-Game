@@ -6,7 +6,7 @@
 #include<functional>
 #include <iostream>
 #include <condition_variable>
-
+#include <stdarg.h>
 class threadPool {
 	public:
 		threadPool(int);
@@ -14,9 +14,10 @@ class threadPool {
 			std::cout << "Destroyed" << std::endl;
 		}
 		//std::thread getWorkerThread();
-		int addJob(std::function<int()>);
+		int addJob(int count,std::function<int()>,...);
 	//	void dispatch();
 		void destroy();
+		int waitFinished();
 	private:
 		int isJobQueueEmpty;
 		std::mutex m1, m2;
@@ -25,7 +26,7 @@ class threadPool {
 		int remainingThreads;
 		int loopingFunction();
 		std::vector<std::thread> myThreads;
-		std::condition_variable c;
+		std::condition_variable c,w;
 		std::queue<std::function<int()>> jobQueue;
 		int flag;
 		int isWorkToDo;

@@ -12,7 +12,16 @@ threadPool::threadPool(int n) {
 	}
 
 }
+int threadPool::waitFinished() {
+	{
+		std::unique_lock<std::mutex> lock(m1);
+		while (isJobQueueEmpty == 0) {
+			w.wait(lock);
+		}
 
+	}
+	return 1;
+}
 int threadPool::loopingFunction() {
 	//std::condition_variable c;
 	std::function<int()> job;
@@ -22,19 +31,22 @@ int threadPool::loopingFunction() {
 			std::unique_lock<std::mutex> lock(m1);
 
 			while (jobQueue.size() == 0 && !isStop) {
-				c.wait(lock);// , [this]() {return !jobQueue.size() == 0; });
-
+				c.wait(lock);
 			}
 			if (isStop) return 0;
 
 			job = jobQueue.front();
 			jobQueue.pop();
+		}
+		job();
+		{
+			std::unique_lock<std::mutex> lock2(m2);
 			isWorkToDo -= 1;
 			if (isWorkToDo == 0) {
 				isJobQueueEmpty = 1;
+				w.notify_all();
 			}
 		}
-		job();
 		//std::this_thread::sleep_for(std::chrono::seconds(4));
 	}
 }
