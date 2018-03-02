@@ -11,17 +11,21 @@ public:
 		return sprite.getPosition();
 	}
 	inline bool isOutOfBounds(sf::Vector2u windowBounds) {
-		if (sprite.getPosition().x > windowBounds.x /*|| sprite.getPosition().x <0 || sprite.getPosition().y < 0 || sprite.getPosition().y > windowBounds.y*/) {
+		if (sprite.getPosition().x > windowBounds.x || sprite.getPosition().x<0 || sprite.getPosition().y>windowBounds.y || sprite.getPosition().y<0) {
 			std::cout << sprite.getPosition().x << "and" << sprite.getPosition().y << std::endl;
 			return true;
 		}
 		else return false;
 	}
-	int draw(sf::RenderTarget *target);
+	inline sf::FloatRect getGlobalBounds() {
+		return sprite.getGlobalBounds();
+	}
+	void draw(sf::RenderTarget *target);
 private:
-	
+	float acceleration;
+
 	sf::Texture texture;
 	sf::Sprite sprite;
-	sf::Vector2f maxVelocity;
-
+	sf::Vector2f maxVelocity,direction;
+	sf::Vector2f currentVelocity;
 };
