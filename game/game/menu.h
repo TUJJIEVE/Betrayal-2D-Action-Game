@@ -6,7 +6,7 @@ class Menu {
 
 public:
 	int displayMenu();
-	Menu(sf::RenderWindow * window);
+	Menu(sf::RenderWindow * window,int);
 	~Menu();
 	void moveUp();
 	void moveDown();
@@ -21,6 +21,7 @@ private:
 		Exit,
 		LastMenu
 	};
+	int option;
 	sf::Text menuText[NumMenuItems];
 	sf::Font fontStyle;
 	
@@ -28,7 +29,7 @@ private:
 	float MenuHeight;
 	sf::RenderWindow * menuWindow;
 	sf::Sprite menuImage;
-	sf::Texture menuTexture;
+	sf::Texture menuTexture,menuTexture1;
 
 
 

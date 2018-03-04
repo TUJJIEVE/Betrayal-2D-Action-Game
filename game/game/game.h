@@ -17,13 +17,13 @@ class Game {
 		Game(int numWorkerThreads,sf::RenderWindow *,int numLevels,int enemies,std::string maps);
 
 		~Game();
-		void init();
+		int init();
 		void handleEvents();
 		void update();
 		void render();
 		bool gameActive;
 		int displayTitlescreen();
-
+		int displayGameOver();
 		inline	sf::RenderWindow * getGameWindow() {
 			return this->gameWindow;   // Can be *this->gameWindow??
 		}
@@ -36,7 +36,7 @@ class Game {
 			gameWindow->close();
 		
 		}
-		Menu * mainMenu;
+		Menu * mainMenu,*pauseMenu;
 		sf::RenderWindow * gameWindow;
 private :
 	
@@ -68,18 +68,21 @@ private :
 	std::string mapPaths;
 
 	Hero *srikanth, *ujjieve;
-
+	
 	sf::Music *mainMenuSong;
 	sf::Music *storySong;
 	sf::Music *openingSong;
-	sf::SoundBuffer enemyGunSound;
+	sf::SoundBuffer enemyGunSound,gameOverBuffer;
+	sf::Sound gameOverSound;
 	sf::Texture spaceEnemy, groundEnemy,bulletEnemy;
+	sf::Text gameOver;
+	sf::Font fontStyle;
 	int enemyspawntimer, enemyspawntimermax;
 	int currentLevel, totalLevels;
 	int totalenemies;
 	int isopen;
 	bool iskey;
-	bool isMenuActive;
+	bool isMenuActive, isPauseActive;
 	bool runGame;// if menu active or not
 	 // if game is active or not if yes then update and render methods are invoked else not invoked
 					 

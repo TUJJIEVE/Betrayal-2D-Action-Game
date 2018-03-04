@@ -2,11 +2,12 @@
 #include <iostream>
 
 
-Menu::Menu(sf::RenderWindow * window) {
+Menu::Menu(sf::RenderWindow * window,int opt) {
 	menuWindow = window;
 	Menuwidth = menuWindow->getSize().x;
 	MenuHeight = menuWindow->getSize().y;
 	menuSelected = 0;
+	option = opt;
 }
 
 int Menu::loadMenu() { 
@@ -20,8 +21,14 @@ int Menu::loadMenu() {
 		std::cout << " Error loading the menuImage" << std::endl;
 		return EXIT_FAILURE;
 	}
+	if (!menuTexture1.loadFromFile("images_f/menuImage1.jpg")) {
+		std::cout << " Error loading the menuImage" << std::endl;
+		return EXIT_FAILURE;
+
+	}
 	std::cout << "Loaded menuImage" << std::endl;
-	menuImage.setTexture(menuTexture);
+	if (option==0) menuImage.setTexture(menuTexture);
+	else menuImage.setTexture(menuTexture1);
 	for (int i =0; i <NumMenuItems; i++) {
 		switch (i) {
 		case 0:

@@ -7,6 +7,7 @@ Game::Game(int numWorkerThreads, sf::RenderWindow * window, int numLevels, int e
 	workerPool = new threadPool(numWorkerThreads);
 
 	isMenuActive = false;
+	isPauseActive = false;
 	gameActive = false;
 	totalenemies = 10;
 	currentLevel = 0;
@@ -22,7 +23,8 @@ Game::Game(int numWorkerThreads, sf::RenderWindow * window, int numLevels, int e
 	
 	srikanth = new Hero("images_f/sfr.png@images_f/sfl.png@images_f/sbr.png@images_f/sbl.png@images_f/srr.png@images_f/srl.png@images_f/srm.png@images_f/slr.png@images_f/sll.png@images_f/slm.png@images_f/p1_space.png@", "images_f/laserbeam.png", sf::Vector2f(450.f, 450.f), 100, 10, sf::Keyboard::W, sf::Keyboard::S, sf::Keyboard::A, sf::Keyboard::D, sf::Keyboard::LShift, this->gameWindow->getSize());
 	ujjieve = new Hero("images_f/ufr.png@images_f/ufl.png@images_f/ubr.png@images_f/ubl.png@images_f/urr.png@images_f/url.png@images_f/urm.png@images_f/ulr.png@images_f/ull.png@images_f/ulm.png@images_f/p2_space.png@", "images_f/laserbeam.png", sf::Vector2f(210.f, 320.f), 100, 200, sf::Keyboard::I, sf::Keyboard::K, sf::Keyboard::J, sf::Keyboard::L, sf::Keyboard::RShift, this->gameWindow->getSize());
-	this->mainMenu = new Menu(window);  // To create menu
+	this->mainMenu = new Menu(window,0);
+	this->pauseMenu = new Menu(window, 1);// To create menu
 	this->mainMenuSong = new sf::Music();
 	this->storySong = new sf::Music();
 
@@ -32,7 +34,8 @@ Game::Game(int numWorkerThreads, sf::RenderWindow * window, int numLevels, int e
 
 	this->workerPool->addJob(3,menuJob,mapJob,enemyJob);
 //	this->workerPool->addJob(1, menuJob);
-
+	
+	if (!fontStyle.loadFromFile("CHILLER.TTF"));
 
 }
 // Method to load the maps 
@@ -65,13 +68,13 @@ int Game::loadEnemies() {
 		return EXIT_FAILURE;
 
 	}
-	if (!bulletEnemy.loadFromFile("images_f/bullet.png")) {
+	if (!bulletEnemy.loadFromFile("images_f/laserbeam.png")) {
 		std::cout << "Error loading the bullet texture" << std::endl;
 		return EXIT_FAILURE;
 	}
 	if (!enemyGunSound.loadFromFile("sounds_f/bullet.wav"));
 	for (int i = 0; i < numEnemies; i++) {
-		enemies.push_back(Enemy(groundEnemy, spaceEnemy,bulletEnemy,enemyGunSound, sf::Vector2f(0, 0), 100, 5, 0,sf::Vector2f(-1.f,0.f), this->gameWindow->getSize()));
+		enemies.push_back(Enemy(rand()% 2,groundEnemy, spaceEnemy,bulletEnemy,enemyGunSound, sf::Vector2f(0, 0), 100, 5, rand() %2,sf::Vector2f(-1.f,0.f), this->gameWindow->getSize()));
 		
 	}
 
@@ -101,10 +104,11 @@ int Game::loadMenu() {
 
 
 	this->mainMenu->loadMenu();
-
+	this->pauseMenu->loadMenu();
 
 	return 0;
 }
+
 // Method to display the title screen
 int Game::displayTitlescreen() {  /* Function to print the title Screen*/
 
@@ -160,26 +164,18 @@ void Game::handleEvents() {
 			gameWindow->close();
 	
 			break;
-		
-		
-		case sf::Event::KeyPressed:
-		//	iskey = false;
-			std::cout << "keypressed\n";
-			break;
 
 		case sf::Event::KeyReleased:
-		//	iskey = true;
-			std::cout << "keyreleased\n";
-			if (event.key.code == sf::Keyboard::Escape) {
-/*				if (isPlaymode) {
-					gameWindow->setActive(false);
-					std::function<int()> job = std::bind(&Menu::displayMenu, this->mainMenu);
-					workerPool->addJob(job);
 
-				}
-*/				break;
+			if (event.key.code == sf::Keyboard::Escape && gameActive) {
+				gameActive=false;
+				mainMenuSong->play();
+				pauseMenu->displayMenu();
+				isMenuActive = false;
+				isPauseActive = true;
+				break;
 			}
-			else if (event.key.code == sf::Keyboard::Return) {
+			else if (event.key.code == sf::Keyboard::Return && gameActive==false) {
 				if (isMenuActive == true) { // Condition for selecting the menu if menu is active
 					std::cout << "Menu no." << mainMenu->menuSelected << std::endl;
 					std::function<int()> job;
@@ -198,7 +194,8 @@ void Game::handleEvents() {
 						mainMenuSong->pause();
 						gameWindow->setActive(true);
 						/*Updating the level*/
-					//	this->levelUpdate();
+//						this->levelUpdate();
+						init();
 						gameWindow->clear();
 
 						break;
@@ -208,14 +205,35 @@ void Game::handleEvents() {
 						break;
 					}
 				}
+				else if (isPauseActive) {
+					std::cout << "Menu no." << pauseMenu->menuSelected << std::endl;
+					std::function<int()> job;
+					switch (pauseMenu->menuSelected) {
+					case 0:
+						gameActive = true;
+						//	gameWindow->clear();
+						break;
+
+					case 1:
+
+						break;
+					case 2:
+						gameWindow->clear();
+						gameActive = false;
+						isPauseActive = false;
+						isMenuActive = true;
+						mainMenuSong->pause();
+						mainMenuSong->play();
+						mainMenu->displayMenu();
+						break;
+					}
+
+				}
 				else { // Condition for starting the game after the story is displayd
 					std::cout << "Game started let's play" << std::endl;
 					gameActive = true;
 					gameWindow->setActive(true);
-					ujjieve->initialize();
-					ujjieve->setCurrentMap(gameMaps[currentLevel]);
-					srikanth->initialize();
-					srikanth->setCurrentMap(gameMaps[currentLevel]);
+					/*update the level*/
 					gameWindow->clear();
 
 
@@ -223,14 +241,16 @@ void Game::handleEvents() {
 			
 			}
 			
-			else if (event.key.code == sf::Keyboard::Up && isMenuActive) {
+			else if (event.key.code == sf::Keyboard::Up && (isMenuActive || isPauseActive)) {
 				gameWindow->setActive(true);
-				mainMenu->moveUp();
+				if (isMenuActive)mainMenu->moveUp();
+				else pauseMenu->moveUp();
 				break;
 			}
-			else if (event.key.code == sf::Keyboard::Down && isMenuActive) {
+			else if (event.key.code == sf::Keyboard::Down && (isMenuActive || isPauseActive)) {
 				gameWindow->setActive(true);
-				mainMenu->moveDown();
+				if (isMenuActive) mainMenu->moveDown();
+				else pauseMenu->moveDown();
 				break;
 			}
 
@@ -258,15 +278,18 @@ int Game::enemyUpdate() {
 	}
 	return 0;
 }
+int Game::init() {
+	ujjieve->initialize();
+	ujjieve->setCurrentMap(gameMaps[currentLevel]);
+	srikanth->initialize();
+	srikanth->setCurrentMap(gameMaps[currentLevel]);
+
+}
 int Game::levelUpdate(){
 	if (currentLevel<2) currentLevel += 1;
 	enemyUpdate();
 	ujjieve->setLevel(this->currentLevel);
-	ujjieve->initialize();
-	ujjieve->setCurrentMap(gameMaps[currentLevel]);
 	srikanth->setLevel(this->currentLevel);
-	srikanth->initialize();
-	srikanth->setCurrentMap(gameMaps[currentLevel]);
 	return 0;
 }
 // Method to update the players position health etc.
@@ -284,9 +307,9 @@ int Game::playersUpdate() {
 //	this->workerPool->addJob(2, sriJob, ujjJob);
 	std::cout << "The number of enemies are " << enemies.size() << std::endl;
 	this->enemyspawntimer++;
-	if (totalenemies<=40 && this->enemyspawntimer >= this->enemyspawntimermax) {
+	if (currentLevel==1 && totalenemies<=40 && this->enemyspawntimer >= this->enemyspawntimermax) {
 		totalenemies += 1;
-		enemies.push_back(Enemy(groundEnemy, spaceEnemy, bulletEnemy,enemyGunSound, sf::Vector2f(0, 0), 100, 5, 0, sf::Vector2f(-1.f, 0.f), this->gameWindow->getSize()));
+		enemies.push_back(Enemy(rand()%2,groundEnemy, spaceEnemy, bulletEnemy,enemyGunSound, sf::Vector2f(0, 0), 100, 5, rand() % 2, sf::Vector2f(-1.f, 0.f), this->gameWindow->getSize()));
 		enemies.back().setLevel(this->currentLevel);
 		enemies.back().initialize();
 
@@ -295,14 +318,21 @@ int Game::playersUpdate() {
 	}
 	for (int i = 0; i < enemies.size(); i++) {
 
-		enemies[i].update();
+		if (enemies[i].playerNr==0) enemies[i].update(srikanth->getPosition());
+		else {
+			enemies[i].update(ujjieve->getPosition());
+		}
+
 		if (ujjieve->getGlobalBounds().intersects(enemies[i].getGlobalBound())) {
-			enemies.erase(enemies.begin() + i);
-			ujjieve->takeDamage(40);
+			if (currentLevel==1) enemies.erase(enemies.begin() + i);
+			enemies[i].takeDamage(40);
+			ujjieve->takeDamage(30);
 		}
 		if (srikanth->getGlobalBounds().intersects(enemies[i].getGlobalBound())) {
-			enemies.erase(enemies.begin() + i);
-			srikanth->takeDamage(40);
+			if (currentLevel==1)enemies.erase(enemies.begin() + i);
+			enemies[i].takeDamage(40);
+			srikanth->takeDamage(30);
+
 		}
 
 		else if (this->enemies[i].getPosition().x < 0 - this->enemies[i].getGlobalBound().width) {
@@ -354,6 +384,8 @@ void Game::update() {
 	else {
 		runGame = false;
 		gameActive = false;
+		std::function<int()> gameOverJob = std::bind(&Game::displayGameOver, this);
+		workerPool->addJob(1, gameOverJob);
 	//	isMenuActive = true;
 	}
 }
@@ -370,6 +402,14 @@ void Game::render() {
 
 }
 
+int Game::displayGameOver() {
+	gameOverSound.play();
+	gameOver.setString("GAME OVER PLEASE TRY AGAIN");
+	gameOver.setFillColor(sf::Color::Red);
+	gameOver.setCharacterSize(100);
+	gameWindow->draw(gameOver);
+	return 0;
+}
 Game::~Game() {
 
 }
