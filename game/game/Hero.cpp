@@ -1,5 +1,5 @@
 #include "Hero.h"
-
+#include "Map.h"
 enum controls
 {
 	UP=0,
@@ -9,13 +9,21 @@ enum controls
 	SHOOT,
 	LAST
 };
-Hero::Hero(std::string path,std::string bullet,sf::Vector2f initialPosition, int hp,int dmgValue,int up,int down,int left,int right,int shoot):Player(path,initialPosition,hp,bullet){
-	//imgPath = path;
+Hero::Hero(std::string path,std::string bullet,sf::Vector2f initialPosition, int hp,int dmgValue,int up,int down,int left,int right,int shoot,sf::Vector2u wb){
+	isAlive = true;
 	damage = dmgValue;
+	damagemax = 50;
 	level = 1;
+	currentLevel = 0;
 	xp = 0;
 	score = 0;
-	speed = 1.5f;
+	speed = 5.5f;
+	imgPath = path;
+	bulletPath = bullet;
+	maxhp = hp;
+	initialPos = initialPosition;
+	windowBounds = wb;
+	currentHp = maxhp;
 	//presentdirection = 'd';
 	std::cout << this->imgPath << std::endl;
 	this->hControls[controls::UP] = up;
@@ -27,98 +35,154 @@ Hero::Hero(std::string path,std::string bullet,sf::Vector2f initialPosition, int
 }
 
 void Hero::movement() {
-
+	std::cout << "sfasdfsf " << enemies->size() << std::endl;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::UP]))) {
-		upcount++;
-//		if (upcount > 1) return;
+/*		if (currentLevel!=1 && currentMap->check_collision_with_boundary('u', speed, sprite.getPosition())) {
+			std::cout << "Collision occured with the boundary" << std::endl;
+		}
+*/
 		std::cout << "Key pressed is" << hControls[controls::UP] << std::endl;
-		if (is_right)sprite.setTexture(bl_);
-		else sprite.setTexture(br_);
+		if (currentLevel!=1) {
+			if (is_right)sprite.setTexture(bl_);
+			else sprite.setTexture(br_);
+			is_right = !is_right;
+
+		}
 		sprite.move(0.0f, -speed);
-		is_right = !is_right;
 		presentdirection = 'u';
 
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::DOWN]))) {
-		downcount++;
-//		if (downcount > 1) return;
+/*		if (currentLevel!=1 && currentMap->check_collision_with_boundary('d', speed, sprite.getPosition())) {
+			std::cout << "Collision occured with the boundary" << std::endl;
+		}
+*/
 		std::cout << "Key pressed is" << hControls[controls::DOWN]<<std::endl;
-		if (is_right)sprite.setTexture(fl_);
-		else sprite.setTexture(fr_);
+
+		if (currentLevel != 1) {
+			if (is_right)sprite.setTexture(fl_);
+			else sprite.setTexture(fr_);
+			is_right = !is_right;
+
+		}
 		sprite.move(0.0f, speed);
-		is_right = !is_right;
 		presentdirection = 'd';
+
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::LEFT]))) {
-		leftcount++;
-	//	if (leftcount > 1) return;
+/*		if (currentLevel!=1 && currentMap->check_collision_with_boundary('l', speed, sprite.getPosition())) {
+			std::cout << "Collision occured with the boundary" << std::endl;
+		}
+*/
 		std::cout << "Key pressed is" << hControls[controls::LEFT]<<std::endl;
-		if (is_side) {
-			sprite.setTexture(lm_);
-			is_side = !is_side;
+		if (currentLevel != 1) {
+			if (is_side) {
+				sprite.setTexture(lm_);
+				is_side = !is_side;
+			}
+			else {
+				if (is_right)sprite.setTexture(ll_);
+				else sprite.setTexture(lr_);
+				is_side = !is_side;
+				is_right = !is_right;
+			}
 		}
-		else {
-			if (is_right)sprite.setTexture(ll_);
-			else sprite.setTexture(lr_);
-			is_side = !is_side;
-			is_right = !is_right;
-		}
-		
 		sprite.move(-speed, 0.0f);
 		presentdirection = 'l';
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::RIGHT]))) {
-		rightcount++;
-	//	if (rightcount > 1) return;
-		std::cout << "Key pressed is" << hControls[controls::RIGHT]<<std::endl;
-		if (is_side) {
-			sprite.setTexture(rm_);
-			is_side = !is_side;
+/*		if (currentLevel!=1 && currentMap->check_collision_with_boundary('r', speed, sprite.getPosition())) {
+			std::cout << "Collision occured with the boundary" << std::endl;
 		}
-		else {
-			if (is_right)sprite.setTexture(rl_);
-			else sprite.setTexture(rr_);
-			is_side = !is_side;
-			is_right = !is_right;
+*/
+		std::cout << "Key pressed is" << hControls[controls::RIGHT]<<std::endl;
+		if (currentLevel != 1) {
+			if (is_side) {
+				sprite.setTexture(rm_);
+				is_side = !is_side;
+			}
+			else {
+				if (is_right)sprite.setTexture(rl_);
+				else sprite.setTexture(rr_);
+				is_side = !is_side;
+				is_right = !is_right;
+			}
 		}
 		sprite.move(speed, 0.0f);
 		presentdirection = 'r';
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::SHOOT]))) {
-		shootcount++;
-	//	if (shootcount > 1) return;
 		std::cout << "Present direction is" << " " << presentdirection << std::endl;
 		std::cout << "Key pressed is" << hControls[controls::SHOOT]<<std::endl;
 		gunSound.play();
 		std::cout << sprite.getPosition().x << " " << sprite.getPosition().y << std::endl;
-		this->bullets.push_back(GunBullet(bulletTexture, sf::Vector2f(this->sprite.getPosition().x, this->sprite.getPosition().y),presentdirection));
-
+		if (currentLevel!=1) this->bullets.push_back(GunBullet(bulletTexture,this->sprite.getPosition(),presentdirection));
+		else this->bullets.push_back(GunBullet(bulletTexture, this->sprite.getPosition(), 'r'));
 	}
 	
 	currentPos = sprite.getPosition();
 
 }
+
 int Hero::initialize() {
 	// Used to initilaize the position of the player
-	sprite.setTexture(fr_);
+	if (currentLevel == 0 || currentLevel == 2) {
+		sprite.setTexture(fr_);
+	}
+	else {
+		sprite.setTexture(spaceTexture);
+	}
 	sprite.setPosition(initialPos);
+
 	return 0;
+
 }
-void Hero::update(sf::Vector2u windowBounds) {
-	//std::cout << "updating" << std::endl;
+
+int Hero::update() {
+	/* If collision occurs with the boundary then donot move else move*/
 	this->movement();
+	for (size_t i = 0; i < playerFollowText.size(); i++) {
+
+		this->playerFollowText[i].setPosition(this->sprite.getPosition().x,this->sprite.getPosition().y-15.f);
+		this->playerFollowText[i].setString("hp:"+ std::to_string(currentHp));
+	}
+//	std::cout << "Number of enemies in hero class are" << enemies->size()<<std::endl;
+	bool bulletremoved = false;
+
 	for (size_t i = 0; i < bullets.size(); i++) {
 		this->bullets[i].update();
-		if (bullets[i].isOutOfBounds(windowBounds)){
+		
+		std::cout << enemies->size()<<std::endl;
+		for (size_t j = 0; j < enemies->size(); j++) {
+			sf::FloatRect bound = enemies->at(j).getGlobalBound();
+			if (this->bullets[i].getGlobalBounds().intersects(bound)) {
+				std::cout << "Hit" << std::endl;
+				enemies->at(j).takeDamage(this->getDamage());
+				if (enemies->at(j).isDead()) enemies->erase(enemies->begin() + i);
+				//	enemies->erase(enemies->begin() + j);
+				//		enemies->at(j).takeDamage(damage);
+				bullets.erase(bullets.begin() + i);
+				std::cout << "Erasing bullets after hitting\n";
+				bulletremoved = true;
+				break;
+			}
+		}
+		if (!bulletremoved && bullets[i].isOutOfBounds(windowBounds)){
 			std::cout << "Erasing bullets\n";
 			bullets.erase(bullets.begin() + i);
 		}
+		bulletremoved = false;
 	}
 
+	return 0;
 }
 
 void Hero::draw(sf::RenderTarget *target) {
+
 	target->draw(sprite);
+	for (size_t i = 0; i < playerFollowText.size(); i++) {
+		target->draw(playerFollowText[i]);
+	}
 	for (size_t i = 0; i < bullets.size(); i++) {
 		this->bullets[i].draw(target);
 	}
@@ -127,6 +191,8 @@ void Hero::draw(sf::RenderTarget *target) {
 }
 
 int Hero::loadFiles() {
+	/* Function to load the textures and sounds*/
+
 	int i = 0;
 	while (imgPath[i] != '@')fr = fr + imgPath[i++];
 	i++;
@@ -158,8 +224,12 @@ int Hero::loadFiles() {
 	while (imgPath[i] != '@')lm = lm + imgPath[i++];
 	i++;
 	if (!lm_.loadFromFile(lm))printf("unable to form texturtes");
-
-	/* Function to load the textures and sounds*/
+	while (imgPath[i] != '@') space = space + imgPath[i++];
+	i++;
+	if (!spaceTexture.loadFromFile(space)) {
+		std::cout << "Space ship not loaded" << std::endl;
+		return EXIT_FAILURE;
+	}
 	if (!bulletTexture.loadFromFile(bulletPath)) {
 		std::cout << "Bullet texture not loaded" << std::endl;
 		return EXIT_FAILURE;
@@ -170,8 +240,32 @@ int Hero::loadFiles() {
 		return EXIT_FAILURE;
 		std::cout << "Error loading the gun sound files for hero" << std::endl;
 	}
+
+	if (!fontStyle.loadFromFile("CHILLER.TTF")) {
+		std::cout << "Error loading the font for hero" << std::endl;
+		return EXIT_FAILURE;
+	}
+	sf::Text tempText;
+	for (size_t i = 0; i < 1; i++) {
+		tempText.setFont(fontStyle);
+		tempText.setCharacterSize(15);
+		tempText.setFillColor(sf::Color::White);
+		tempText.setString("N/A");
+		this->playerFollowText.push_back(tempText);
+
+	}
 	std::cout << "loaded gunsounds\n";
 	gunSound.setBuffer(gunBuffer);
+	return 0;
+}
+
+
+int Hero::takeDamage(int damage) {
+	this->currentHp -= damage;
+	if (currentHp < 0) {
+		currentHp = 0;
+		isAlive = false;
+	}
 	return 0;
 }
 Hero::~Hero() {
