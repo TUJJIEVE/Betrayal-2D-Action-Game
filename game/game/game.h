@@ -1,26 +1,27 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 #include "threadPool.h"
-#include "Player.h"
+
 #include "menu.h"
 #include "IntroDisplay.h"
 #include "Hero.h"
 #include <SFML\Audio.hpp>
 #include "Map.h"
+#include "Enemy.h"
 /* First create the players using players class then create the game pass the player pointers to the game
    
 */
 class Game {
 	public:
 
-		Game(int numWorkerThreads,sf::RenderWindow *,int numLevels,std::string maps);
+		Game(int numWorkerThreads,sf::RenderWindow *,int numLevels,int enemies,std::string maps);
 
 		~Game();
 		void init();
 		void handleEvents();
 		void update();
 		void render();
-		 
+		bool gameActive;
 		int displayTitlescreen();
 
 		inline	sf::RenderWindow * getGameWindow() {
@@ -56,27 +57,31 @@ private :
 
 	};
 	/*Atrributes for the game class */
-
+	int numEnemies;
 	sf::Event event;  
 	threadPool * workerPool;
-
-	std::vector<sf::Sprite> spriteSheet;
-	std::vector<sf::Sound> sounds;
+	std::vector<Enemy> enemies;
+//	std::vector<sf::Sprite> spriteSheet;
+//	std::vector<sf::Sound> sounds;
 	std::vector<Maps> gameMaps;
 
 	std::string mapPaths;
 
-	Player *srikanth, *ujjieve;
+	Hero *srikanth, *ujjieve;
 
 	sf::Music *mainMenuSong;
 	sf::Music *storySong;
 	sf::Music *openingSong;
-
+	sf::SoundBuffer enemyGunSound;
+	sf::Texture spaceEnemy, groundEnemy,bulletEnemy;
+	int enemyspawntimer, enemyspawntimermax;
 	int currentLevel, totalLevels;
+	int totalenemies;
 	int isopen;
 	bool iskey;
-	bool isMenuActive; // if menu active or not
-	bool gameActive; // if game is active or not if yes then update and render methods are invoked else not invoked
+	bool isMenuActive;
+	bool runGame;// if menu active or not
+	 // if game is active or not if yes then update and render methods are invoked else not invoked
 					 
 	/*Methods used by game class*/
 
@@ -85,11 +90,14 @@ private :
 	// For updating purposes
 	int playersUpdate();
 	int mapUpdate();
+	int levelUpdate();
+	int enemyUpdate();
 	// For rendering purposes
 	void playerRender();
 	void mapRender();
 	// For loading purposes
 	int loadMenu();
 	int loadMaps();
+	int loadEnemies();
 
 };
