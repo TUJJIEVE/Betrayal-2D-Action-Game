@@ -8,11 +8,10 @@
 
 class Enemy{
 public:
-
-	Enemy(std::string, std::string, sf::Vector2f, int, int,int,sf::Vector2f,sf::Vector2u);
+	Enemy(int,sf::Texture , sf::Texture, sf::Texture,sf::SoundBuffer, sf::Vector2f, int, int,int,sf::Vector2f,sf::Vector2u);
 	int loadFiles();
-	void movement();
-	void update();
+	void movement(sf::Vector2f);
+	void update(sf::Vector2f);
 	void draw(sf::RenderTarget *);
 	int initialize();
 	
@@ -37,7 +36,11 @@ public:
 		return sprite.getGlobalBounds();
 	}
 	inline int isDead() const { return this->hp <= 0; }
-
+	int takeDamage(int damage);
+	int type;
+	float vectorLength(sf::Vector2f v);
+	sf::Vector2f normalize(sf::Vector2f v, float length);
+	int playerNr;
 
 private:
 	sf::Sprite sprite;
@@ -46,14 +49,12 @@ private:
 	sf::Texture spaceTexture;
 	sf::Vector2u windowBounds;
 	std::string enemy1, enemy2;
-	int type;
 	int damageMin;
 	int damageMax;
 	std::vector<sf::Text> playerFollowText;
 	Maps * currentMap;
 	int currentLevel;
 	sf::Vector2f direction;
-	std::string imgPath, bulletPath;
 	sf::SoundBuffer gunBuffer;
 	sf::Sound gunSound;
 	sf::RectangleShape hitbox;
@@ -67,6 +68,5 @@ private:
 	int level;
 	int damage;
 
-	int takeDamage(int damage);
 
 };
