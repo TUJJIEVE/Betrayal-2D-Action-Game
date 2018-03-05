@@ -24,6 +24,7 @@ class Game {
 		bool gameActive;
 		int displayTitlescreen();
 		int displayGameOver();
+		
 		inline	sf::RenderWindow * getGameWindow() {
 			return this->gameWindow;   // Can be *this->gameWindow??
 		}
@@ -38,6 +39,8 @@ class Game {
 		}
 		Menu * mainMenu,*pauseMenu;
 		sf::RenderWindow * gameWindow;
+		bool runGame, isgameOver;// if menu active or not
+
 private :
 	
 	enum Sprites
@@ -83,7 +86,6 @@ private :
 	int isopen;
 	bool iskey;
 	bool isMenuActive, isPauseActive;
-	bool runGame;// if menu active or not
 	 // if game is active or not if yes then update and render methods are invoked else not invoked
 					 
 	/*Methods used by game class*/
@@ -102,5 +104,6 @@ private :
 	int loadMenu();
 	int loadMaps();
 	int loadEnemies();
+	int loadSongs();
 
 };
