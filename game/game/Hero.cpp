@@ -13,7 +13,6 @@ Hero::Hero(std::string path,std::string bullet,sf::Vector2f initialPosition, int
 	isAlive = true;
 	damage = dmgValue;
 	damagemax = 50;
-	level = 1;
 	currentLevel = 0;
 	xp = 0;
 	score = 0;
@@ -24,8 +23,10 @@ Hero::Hero(std::string path,std::string bullet,sf::Vector2f initialPosition, int
 	initialPos = initialPosition;
 	windowBounds = wb;
 	currentHp = maxhp;
-	//presentdirection = 'd';
-	std::cout << this->imgPath << std::endl;
+	acceleration = 0.5f;
+	this->bullets.reserve(50);
+	this->maxVelocity = 8.f;
+	
 	this->hControls[controls::UP] = up;
 	this->hControls[controls::DOWN] = down;
 	this->hControls[controls::LEFT] = left;
@@ -33,7 +34,10 @@ Hero::Hero(std::string path,std::string bullet,sf::Vector2f initialPosition, int
 	this->hControls[controls::SHOOT] = shoot;
 
 }
-
+int Hero::moveHero(sf::Vector2f direction) {
+	
+	return 0;
+}
 void Hero::movement() {
 	std::cout << "sfasdfsf " << enemies->size() << std::endl;
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::UP]))) {
@@ -48,7 +52,14 @@ void Hero::movement() {
 			is_right = !is_right;
 
 		}
-		sprite.move(0.0f, -speed);
+		if (currentLevel == 1) {
+			this->direction = sf::Vector2f(0.f, -1.f);
+			if (this->currentVelocity.y > -maxVelocity) {
+				this->currentVelocity.y += this->direction.y * this->acceleration;
+			}
+		}
+		else this->currentVelocity = sf::Vector2f(0.f, -speed);
+
 		presentdirection = 'u';
 
 	}
@@ -65,7 +76,17 @@ void Hero::movement() {
 			is_right = !is_right;
 
 		}
-		sprite.move(0.0f, speed);
+		if (currentLevel == 1) {
+			this->direction = sf::Vector2f(0.f, 1.f);
+			if (this->currentVelocity.x < this->maxVelocity) {
+				this->currentVelocity.x += this->direction.x * this->acceleration;
+			}
+			if (this->currentVelocity.y < maxVelocity) {
+				this->currentVelocity.y += this->direction.y * this->acceleration;
+			}
+		}
+
+		else this->currentVelocity = sf::Vector2f(0.f, speed);
 		presentdirection = 'd';
 
 	}
@@ -87,7 +108,14 @@ void Hero::movement() {
 				is_right = !is_right;
 			}
 		}
-		sprite.move(-speed, 0.0f);
+		if (currentLevel == 1) {
+			this->direction = sf::Vector2f(-1.f, 0.f);
+			if (this->currentVelocity.x > -this->maxVelocity) {
+				this->currentVelocity.x += this->direction.x * this->acceleration;
+			}
+		}
+
+		else this->currentVelocity = sf::Vector2f(-speed, 0.f);
 		presentdirection = 'l';
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::RIGHT]))) {
@@ -108,29 +136,41 @@ void Hero::movement() {
 				is_right = !is_right;
 			}
 		}
-		sprite.move(speed, 0.0f);
+		if (currentLevel == 1) {
+			this->direction = sf::Vector2f(1.f, 0.f);
+			if (this->currentVelocity.x < this->maxVelocity) {
+				this->currentVelocity.x += this->direction.x * this->acceleration;
+			}
+		}
+		else this->currentVelocity = sf::Vector2f(0.f, speed);
 		presentdirection = 'r';
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key(hControls[controls::SHOOT]))) {
-		std::cout << "Present direction is" << " " << presentdirection << std::endl;
-		std::cout << "Key pressed is" << hControls[controls::SHOOT]<<std::endl;
+//		std::cout << "Present direction is" << " " << presentdirection << std::endl;
+//		std::cout << "Key pressed is" << hControls[controls::SHOOT]<<std::endl;
 		gunSound.play();
 		std::cout << sprite.getPosition().x << " " << sprite.getPosition().y << std::endl;
-		if (currentLevel!=1) this->bullets.push_back(GunBullet(bulletTexture,this->sprite.getPosition(),presentdirection));
-		else this->bullets.push_back(GunBullet(bulletTexture, this->sprite.getPosition(), 'r'));
+		if (currentLevel!=1) this->bullets.push_back(GunBullet(-1,0,bulletTexture,this->sprite.getPosition(),presentdirection));
+		else this->bullets.push_back(GunBullet(-1,0,bulletTexture, this->sprite.getPosition(), 'r'));
 	}
-	
+	sprite.move(this->currentVelocity);
 	currentPos = sprite.getPosition();
 
 }
 
 int Hero::initialize() {
 	// Used to initilaize the position of the player
+	currentHp = 100;
 	if (currentLevel == 0 || currentLevel == 2) {
+		speed = 2.5f;
 		sprite.setTexture(fr_);
 	}
 	else {
+		gunSound.setBuffer(gunBuffer);
 		sprite.setTexture(spaceTexture);
+	}
+	for (size_t i = 0; i < bullets.size(); i++) {
+		bullets.erase(bullets.begin() + i);
 	}
 	sprite.setPosition(initialPos);
 
@@ -150,15 +190,15 @@ int Hero::update() {
 	bool bulletremoved = false;
 
 	for (size_t i = 0; i < bullets.size(); i++) {
-		this->bullets[i].update();
+		this->bullets[i].update(sf::Vector2f(0,0));
 		
 		std::cout << enemies->size()<<std::endl;
 		for (size_t j = 0; j < enemies->size(); j++) {
 			sf::FloatRect bound = enemies->at(j).getGlobalBound();
 			if (this->bullets[i].getGlobalBounds().intersects(bound)) {
-				std::cout << "Hit" << std::endl;
+//				std::cout << "Hit" << std::endl;
 				enemies->at(j).takeDamage(this->getDamage());
-				if (enemies->at(j).isDead()) enemies->erase(enemies->begin() + i);
+				if (enemies->at(j).isDead()) enemies->erase(enemies->begin() + j);
 				//	enemies->erase(enemies->begin() + j);
 				//		enemies->at(j).takeDamage(damage);
 				bullets.erase(bullets.begin() + i);
@@ -184,7 +224,7 @@ void Hero::draw(sf::RenderTarget *target) {
 		target->draw(playerFollowText[i]);
 	}
 	for (size_t i = 0; i < bullets.size(); i++) {
-		this->bullets[i].draw(target);
+		this->bullets[i].draw(*target);
 	}
 	
 
@@ -240,6 +280,8 @@ int Hero::loadFiles() {
 		return EXIT_FAILURE;
 		std::cout << "Error loading the gun sound files for hero" << std::endl;
 	}
+	if (!gunBuffer2.loadFromFile("sounds_f/gun1.wav"));
+	if (!gunBuffer1.loadFromFile("sounds_f/gun2.wav"));
 
 	if (!fontStyle.loadFromFile("CHILLER.TTF")) {
 		std::cout << "Error loading the font for hero" << std::endl;
@@ -255,7 +297,7 @@ int Hero::loadFiles() {
 
 	}
 	std::cout << "loaded gunsounds\n";
-	gunSound.setBuffer(gunBuffer);
+	gunSound.setBuffer(gunBuffer2);
 	return 0;
 }
 

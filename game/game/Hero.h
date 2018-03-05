@@ -34,7 +34,7 @@ public:
 		return 0;
 	}
 	inline void setEnemies(std::vector<Enemy>& e) {
-		enemies = &e;
+		enemies =& e;
 		std::cout << "the numer safsadfs " << e.size() << "and "<<enemies->size() << std::endl;
 	
 	}
@@ -55,31 +55,38 @@ private:
 	sf::Texture groundTex;
 	sf::Texture bulletTexture;
 	sf::Texture spaceTexture;
-	std::vector<Enemy> * enemies;
-	bool is_right = 1, is_side = 1;
+
+	std::vector<Enemy>  *enemies;
 	std::vector<GunBullet> bullets;
+	std::vector<sf::Text> playerFollowText;
+
+	bool is_right = 1, is_side = 1;
 	int score;
 	int xp;
 	int hControls[5];
-	sf::Vector2u windowBounds;
-
-
-	std::vector<sf::Text> playerFollowText;
-	Maps * currentMap;
-	int currentLevel;
-	char presentdirection = 'd';
-	std::string imgPath, bulletPath;
-	sf::SoundBuffer gunBuffer;
-	sf::Sound gunSound;
-	sf::RectangleShape hitbox;
-	sf::Font fontStyle;
-	float speed;
 	int currentHp;  // current Health
 	int maxhp; // max health
+	int damage, damagemax;
+	float acceleration;
+	float maxVelocity;
+	sf::Vector2u windowBounds;
+	sf::Vector2f currentVelocity;
 	sf::Vector2f initialPos;
 	sf::Vector2f currentPos;
-	sf::Vector2f nextPos;
-	int level;
-	int damage,damagemax;
+	sf::Vector2f nextPos,direction;
+
+	sf::SoundBuffer gunBuffer, gunBuffer1, gunBuffer2;
+	sf::Sound gunSound;
+	sf::Font fontStyle;
+
+	std::string imgPath, bulletPath;
+
+	char presentdirection = 'd';
+	float speed;
+	int currentLevel;
+
+	Maps * currentMap;
+
+	int moveHero(sf::Vector2f);
 
 };
