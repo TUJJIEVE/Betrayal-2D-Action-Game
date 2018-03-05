@@ -5,16 +5,16 @@
 #include <SFML\Audio.hpp>
 #include "menu.h"
 #include "Map.h"
-
+#include "GunBullet.h"
 class Enemy{
 public:
 	Enemy(int,sf::Texture , sf::Texture, sf::Texture,sf::SoundBuffer, sf::Vector2f, int, int,int,sf::Vector2f,sf::Vector2u);
 	int loadFiles();
 	void movement(sf::Vector2f);
-	void update(sf::Vector2f);
+	void update(sf::Vector2f,sf::FloatRect);
 	void draw(sf::RenderTarget *);
 	int initialize();
-	
+	int shoot();
 	inline int setLevel(int level) {
 		currentLevel = level;
 		return 0;
@@ -49,6 +49,8 @@ private:
 	sf::Texture spaceTexture;
 	sf::Vector2u windowBounds;
 	std::string enemy1, enemy2;
+	
+	std::vector<GunBullet> bullets;
 	int damageMin;
 	int damageMax;
 	std::vector<sf::Text> playerFollowText;

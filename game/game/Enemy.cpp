@@ -8,7 +8,7 @@ Enemy::Enemy(int num,sf::Texture gtex,sf::Texture stex, sf::Texture bullet,sf::S
 //	speed = 3.5f;
 	damageMax = 20;
 	currentLevel = 0;
-	speed = 2.5f;
+	speed = 3.5f;
 //	imgPath = path;
 //	bulletPath = bullet;
 	playerNr = num;
@@ -18,17 +18,34 @@ Enemy::Enemy(int num,sf::Texture gtex,sf::Texture stex, sf::Texture bullet,sf::S
 	direction = d;
 	maxhp = hp;
 	type = t;
+	if (type == 1) {
+		speed = 5.f;
+	}
 	initialPos = initialPosition;
 	gunBuffer = guns;
 	windowBounds = wb;
-	loadFiles();
+//	loadFiles();
 
 }
+int Enemy::shoot() {
+	for (int i = 0; i < 1;i++) {
+		bullets.push_back(GunBullet(0,1,bulletTexture, sf::Vector2f(sprite.getPosition().x , sprite.getPosition().y), 'u'));
+		bullets.push_back(GunBullet(0,1,bulletTexture, sf::Vector2f(sprite.getPosition().x, sprite.getPosition().y), 'l'));
+		bullets.push_back(GunBullet(0,1,bulletTexture, sf::Vector2f(sprite.getPosition().x , sprite.getPosition().y) , 'r'));
+		bullets.push_back(GunBullet(0,1,bulletTexture, sf::Vector2f(sprite.getPosition().x , sprite.getPosition().y ), 'd'));
+	}
+	return 0;
+}
 int Enemy::initialize() {
-	if (currentLevel ==1) sprite.setTexture(spaceTexture);
-	else sprite.setTexture(groundTex);
-//	sprite.setPosition(initialPos);
-	sprite.setPosition((rand() % windowBounds.x)+ 1240 , (rand() % windowBounds.y )+ sprite.getGlobalBounds().height);
+	if (currentLevel == 1) {
+		sprite.setTexture(spaceTexture);
+		sprite.setPosition((rand() % windowBounds.x) + 1640, (rand() % windowBounds.y) + sprite.getGlobalBounds().height);
+	}
+	else {
+		sprite.setTexture(groundTex);
+		sprite.setPosition((rand() % windowBounds.x), (rand() % windowBounds.y) + sprite.getGlobalBounds().height);
+		//	sprite.setPosition(initialPos);
+	}
 	return 0;
 }
 float Enemy::vectorLength(sf::Vector2f v) {
@@ -39,7 +56,7 @@ sf::Vector2f Enemy::normalize(sf::Vector2f v, float length) {
 }
 
 int Enemy::loadFiles() {
-
+	if (currentLevel == 0) shoot();
 	return 0;
 
 }
@@ -66,11 +83,25 @@ void Enemy::movement(sf::Vector2f playerPos) {
 		}
 	}
 }
-void Enemy::update(sf::Vector2f playerPos) {
+void Enemy::update(sf::Vector2f playerPos,sf::FloatRect playerBounds) {
 	this->movement(playerPos);
+	if (currentLevel == 0) {
+		for (int i = 0; i < bullets.size(); i++) {
+			if (bullets[i].getGlobalBounds().intersects(playerBounds)) {
+				bullets.erase(bullets.begin() + i);
+			}
+			else bullets[i].update(playerPos);
+		}
+	}
+
 }
 void Enemy::draw(sf::RenderTarget * target) {
 	target->draw(this->sprite);
+	if (currentLevel == 0) {
+		for (int i = 0; i < bullets.size(); i++) {
+			bullets[i].draw(*target);
+		}
+	}
 }
 
 

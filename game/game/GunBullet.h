@@ -3,10 +3,10 @@
 #include <iostream>
 class GunBullet {
 public:
-
-	GunBullet(sf::Texture tex, const sf::Vector2f position, char direction);
-	int movement();
-	int update();
+	GunBullet();
+	GunBullet(int,int,sf::Texture tex, const sf::Vector2f position, char direction);
+	int movement(sf::Vector2f playerPos);
+	int update(sf::Vector2f playerPos);
 	inline sf::Vector2f getPosition() {
 		return sprite.getPosition();
 	}
@@ -20,10 +20,14 @@ public:
 	inline sf::FloatRect getGlobalBounds() {
 		return sprite.getGlobalBounds();
 	}
-	void draw(sf::RenderTarget *target);
-private:
-	float acceleration;
+	void draw(sf::RenderTarget &target);
+	float vectorLength(sf::Vector2f v);
+	sf::Vector2f normalize(sf::Vector2f v, float length);
 
+	int playerFollow;
+private:
+	float acceleration,speed;
+	int type;
 	sf::Texture texture;
 	sf::Sprite sprite;
 	sf::Vector2f maxVelocity,direction;
