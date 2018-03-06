@@ -21,16 +21,16 @@ shoot enmies till they disapper.
 both players should be present on screen.
 
 CONTROLS ::
-Player 1 on keyboard ->
-        to move up =  up arrow key 
-        to move down = down arrow key
-        to move left = left arrow key
-        to move right =  right arrow key
+Player 1 on keyboard ->.
+        to move up =  up arrow key .
+        to move down = down arrow key.
+        to move left = left arrow key.
+        to move right =  right arrow key.
         to shoot =   
-Player 2 n keyboard ->
-        to move up = w key
-        to move down = s key
-        to move left = a key
-        to move right = r key
+Player 2 n keyboard ->.
+        to move up = w key.
+        to move down = s key.
+        to move left = a key.
+        to move right = r key.
         to shoot = 
 
