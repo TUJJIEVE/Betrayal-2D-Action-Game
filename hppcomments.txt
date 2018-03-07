@@ -1,0 +1,43 @@
+// ----------------------------------------------------------------------------
+/**  File: filename
+  
+ *System:         windows 10
+ *Project Name:   betrayal
+ *Status:         Version 1.0 Release 1  
+ *Language: C++
+ *Additional library dependencies : SFML
+
+ *License: GNU Public License 
+   
+ *Address:
+ *  cs16btech11029
+ *  iit hyderabad
+ *  boys hostel
+ *  india
+  
+ *Author: cs16btech11029
+ *E-Mail: cs16btech11029@iith.ac.in
+ 
+  
+ *Description: Header file for game "betrayal"
+ *             This file contains the defined types for Project betrayal 
+              
+ *Limitations: bla bla bla
+  
+ *Function: 1) bla bla bla
+ *          2) bla bla bla
+ *          3) bla bla bla
+  
+ *Database tables used: No
+  
+ *Thread Safe: Yes
+  
+ *Extendable: Yes
+  
+ *Platform Dependencies: no 
+
+ *Compiler Options: -lm
+  
+ *Date         Author             Description
+ *7/11/2017    cs16btech11029     student@iit-hyd
+*/ 
