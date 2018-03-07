@@ -1,0 +1,11 @@
+﻿  game.cpp
+c:\users\ujjieve\source\repos\game\game\game.cpp(53): warning C4390: ';': empty controlled statement found; is this the intent?
+c:\users\ujjieve\source\repos\game\game\game.cpp(83): warning C4390: ';': empty controlled statement found; is this the intent?
+  GunBullet.cpp
+c:\users\ujjieve\source\repos\game\game\gunbullet.cpp(72): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Enemy.cpp
+  main.cpp
+  Hero.cpp
+  game.vcxproj -> C:\Users\ujjieve\source\repos\game\x64\Debug\game.exe

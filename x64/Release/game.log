@@ -1,0 +1,41 @@
+﻿  Enemy.cpp
+Enemy.cpp(43): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+Enemy.cpp(47): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+Enemy.cpp(81): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  GunBullet.cpp
+GunBullet.cpp(73): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Hero.cpp
+Hero.cpp(318): warning C4390: ';': empty controlled statement found; is this the intent?
+Hero.cpp(319): warning C4390: ';': empty controlled statement found; is this the intent?
+  Map.cpp
+Map.cpp(31): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+Map.cpp(29): warning C4390: ';': empty controlled statement found; is this the intent?
+Map.cpp(64): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Map.cpp(84): warning C4244: '=': conversion from 'float' to 'unsigned int', possible loss of data
+Map.cpp(85): warning C4244: '=': conversion from 'float' to 'unsigned int', possible loss of data
+Map.cpp(167): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  game.cpp
+game.cpp(53): warning C4390: ';': empty controlled statement found; is this the intent?
+game.cpp(83): warning C4390: ';': empty controlled statement found; is this the intent?
+  main.cpp
+  menu.cpp
+menu.cpp(7): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+menu.cpp(8): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+     Creating library C:\Users\ujjieve\source\repos\game\x64\Release\game.lib and object C:\Users\ujjieve\source\repos\game\x64\Release\game.exp
+Enemy.obj : error LNK2001: unresolved external symbol "public: class sf::SoundBuffer & __cdecl sf::SoundBuffer::operator=(class sf::SoundBuffer const &)" (??4SoundBuffer@sf@@QEAAAEAV01@AEBV01@@Z)
+Enemy.obj : error LNK2001: unresolved external symbol "public: __cdecl sf::SoundBuffer::~SoundBuffer(void)" (??1SoundBuffer@sf@@QEAA@XZ)
+Enemy.obj : error LNK2001: unresolved external symbol "public: __cdecl sf::SoundBuffer::SoundBuffer(void)" (??0SoundBuffer@sf@@QEAA@XZ)
+Enemy.obj : error LNK2001: unresolved external symbol "public: virtual __cdecl sf::Sound::~Sound(void)" (??1Sound@sf@@UEAA@XZ)
+Enemy.obj : error LNK2001: unresolved external symbol "public: __cdecl sf::Sound::Sound(void)" (??0Sound@sf@@QEAA@XZ)
+Hero.obj : error LNK2001: unresolved external symbol "public: bool __cdecl sf::SoundBuffer::loadFromFile(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?loadFromFile@SoundBuffer@sf@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z)
+Hero.obj : error LNK2001: unresolved external symbol "public: class sf::Sound & __cdecl sf::Sound::operator=(class sf::Sound const &)" (??4Sound@sf@@QEAAAEAV01@AEBV01@@Z)
+Hero.obj : error LNK2001: unresolved external symbol "public: void __cdecl sf::Sound::setBuffer(class sf::SoundBuffer const &)" (?setBuffer@Sound@sf@@QEAAXAEBVSoundBuffer@2@@Z)
+Hero.obj : error LNK2001: unresolved external symbol "public: void __cdecl sf::Sound::play(void)" (?play@Sound@sf@@QEAAXXZ)
+game.obj : error LNK2001: unresolved external symbol "public: __cdecl sf::SoundBuffer::SoundBuffer(class sf::SoundBuffer const &)" (??0SoundBuffer@sf@@QEAA@AEBV01@@Z)
+game.obj : error LNK2001: unresolved external symbol "public: __cdecl sf::Sound::Sound(class sf::Sound const &)" (??0Sound@sf@@QEAA@AEBV01@@Z)
+game.obj : error LNK2001: unresolved external symbol "public: bool __cdecl sf::Music::openFromFile(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const &)" (?openFromFile@Music@sf@@QEAA_NAEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z)
+game.obj : error LNK2001: unresolved external symbol "public: __cdecl sf::Music::Music(void)" (??0Music@sf@@QEAA@XZ)
+game.obj : error LNK2001: unresolved external symbol "public: void __cdecl sf::SoundStream::stop(void)" (?stop@SoundStream@sf@@QEAAXXZ)
+game.obj : error LNK2001: unresolved external symbol "public: void __cdecl sf::SoundStream::pause(void)" (?pause@SoundStream@sf@@QEAAXXZ)
+game.obj : error LNK2001: unresolved external symbol "public: void __cdecl sf::SoundStream::play(void)" (?play@SoundStream@sf@@QEAAXXZ)
+C:\Users\ujjieve\source\repos\game\x64\Release\game.exe : fatal error LNK1120: 16 unresolved externals
