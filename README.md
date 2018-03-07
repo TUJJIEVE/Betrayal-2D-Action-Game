@@ -14,7 +14,7 @@ GAME REQUIREMENTS ::
   Windows 10 Operating system .
   1 keyboard .
 
-BUILDING ::
+BUILDING :: check gamedescription pdf
 
 RUlES::
 shoot enmies till they disapper.
@@ -22,7 +22,7 @@ both players should be present on screen.
 
 CONTROLS ::
 Player 1 on keyboard ->.
-        to move up =  up arrow key .
+        to move up =  up arrow key .                                                                                                       
         to move down = down arrow key.
         to move left = left arrow key.
         to move right =  right arrow key.
