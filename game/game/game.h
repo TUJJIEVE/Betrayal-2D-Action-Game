@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 #include "threadPool.h"
-
+#include <future>
 #include "menu.h"
 #include "IntroDisplay.h"
 #include "Hero.h"
@@ -40,6 +40,7 @@ class Game {
 		Menu * mainMenu,*pauseMenu;
 		sf::RenderWindow * gameWindow;
 		bool runGame, isgameOver;// if menu active or not
+		int restart();
 
 private :
 	
@@ -69,25 +70,33 @@ private :
 	std::vector<Maps> gameMaps;
 
 	std::string mapPaths;
-
+	std::packaged_task <int()> *task1;
+	std::packaged_task <int()>* task2;
+	std::packaged_task <int()> *task3;
+	std::packaged_task <int()> *task4;
 	Hero *srikanth, *ujjieve;
 	
 	sf::Music *mainMenuSong;
 	sf::Music *storySong;
 	sf::Music *openingSong;
-	sf::SoundBuffer enemyGunSound,gameOverBuffer;
-	sf::Sound gameOverSound;
+	sf::SoundBuffer enemyGunSound,gameOverBuffer,gameLoadedBuffer;
+	sf::Sound gameOverSound,gameLoadedSound;
 	sf::Texture spaceEnemy, groundEnemy,bulletEnemy;
-	sf::Text gameOver;
+	sf::Text gameOverText,gameLoadedText;
 	sf::Font fontStyle;
+
 	int enemyspawntimer, enemyspawntimermax;
 	int currentLevel, totalLevels;
 	int totalenemies;
 	int isopen;
 	bool iskey;
-	bool isMenuActive, isPauseActive;
+	bool isMenuActive, isPauseActive,spacebarInactive;
 	 // if game is active or not if yes then update and render methods are invoked else not invoked
-					 
+	std::future <int> *f1;
+	std::future <int> *f2;
+	std::future <int> *f3;
+	std::future <int> *f4;
+
 	/*Methods used by game class*/
 
 	// For displaying purposes
@@ -104,6 +113,7 @@ private :
 	int loadMenu();
 	int loadMaps();
 	int loadEnemies();
-	int loadSongs();
+	int loadSounds();
+	int reloadEnemies();
 
 };
